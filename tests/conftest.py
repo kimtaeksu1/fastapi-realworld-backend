@@ -110,7 +110,7 @@ def article_to_create() -> CreateArticleDTO:
     return CreateArticleDTO(
         title="Test Article",
         description="Test Description",
-        body="Test Body",
+        body="Test Body Content",
         tags=["tag1", "tag2"],
     )
 

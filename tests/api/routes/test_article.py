@@ -14,7 +14,7 @@ async def test_user_can_create_new_article(authorized_test_client: AsyncClient) 
     payload = {
         "article": {
             "title": "Test Article",
-            "body": "test body",
+            "body": "test body content",
             "description": "test description",
             "tagList": ["tag1", "tag2", "tag3"],
         }
@@ -30,7 +30,7 @@ async def test_user_can_create_article_without_tags(
     payload = {
         "article": {
             "title": "Test Article",
-            "body": "test body",
+            "body": "test body content",
             "description": "test description",
             "tagList": [],
         }
@@ -46,7 +46,7 @@ async def test_user_can_create_article_without_duplicated_tags(
     payload = {
         "article": {
             "title": "Test Article",
-            "body": "test body",
+            "body": "test body content",
             "description": "test description",
             "tagList": ["tag1", "tag2", "tag2", "tag3", "tag3"],
         }
@@ -63,7 +63,7 @@ async def test_user_can_create_article_with_existing_title(
     payload = {
         "article": {
             "title": test_article.title,
-            "body": "test body",
+            "body": "test body content",
             "description": "test description",
             "tagList": test_article.tags,
         }
@@ -79,7 +79,7 @@ async def test_user_can_retrieve_article_without_tags(
     payload = {
         "article": {
             "title": "Test Article",
-            "body": "test body",
+            "body": "test body content",
             "description": "test description",
             "tagList": [],
         }

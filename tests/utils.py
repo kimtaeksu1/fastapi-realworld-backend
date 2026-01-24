@@ -21,7 +21,7 @@ async def create_another_test_article(
     create_article_dto = CreateArticleDTO(
         title="One More Test Article",
         description="Test Description",
-        body="Test Body",
+        body="Test Body Content",
         tags=["tag1", "tag2", "tag3"],
     )
     return await article_repository.add(

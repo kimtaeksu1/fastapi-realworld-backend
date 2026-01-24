@@ -1,4 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field
+from typing import Any
+
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from conduit.domain.dtos.user import CreateUserDTO, LoginUserDTO, UpdateUserDTO
 
@@ -15,11 +17,16 @@ class UserLoginData(BaseModel):
 
 
 class UserUpdateData(BaseModel):
-    email: str | None = Field(None)
-    password: str | None = Field(None)
-    username: str | None = Field(None)
+    email: EmailStr | None = Field(None)
+    password: str | None = Field(None, min_length=8)
+    username: str | None = Field(None, min_length=3)
     bio: str | None = Field(None)
     image: str | None = Field(None)
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def empty_as_none(cls, v: Any) -> Any:
+        return v or None if isinstance(v, (str,)) else v
 
 
 class UserRegistrationRequest(BaseModel):
