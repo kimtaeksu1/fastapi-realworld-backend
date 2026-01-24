@@ -4,7 +4,16 @@ from fastapi import Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from conduit.api.schemas.requests.article import ArticlesFilters, ArticlesPagination
-from conduit.core.container import container
+from conduit.core.providers import (
+    get_article_service,
+    get_auth_token_service,
+    get_comment_service,
+    get_db_session,
+    get_profile_service,
+    get_tag_service,
+    get_user_auth_service,
+    get_user_service,
+)
 from conduit.core.security import HTTPTokenHeader
 from conduit.domain.dtos.user import UserDTO
 from conduit.services.article import ArticleService
@@ -31,15 +40,15 @@ token_security_optional = HTTPTokenHeader(
 JWTToken = Annotated[str, Depends(token_security)]
 JWTTokenOptional = Annotated[str, Depends(token_security_optional)]
 
-DBSession = Annotated[AsyncSession, Depends(container.session)]
+DBSession = Annotated[AsyncSession, Depends(get_db_session)]
 
-IAuthTokenService = Annotated[AuthTokenService, Depends(container.auth_token_service)]
-IUserAuthService = Annotated[UserAuthService, Depends(container.user_auth_service)]
-IUserService = Annotated[UserService, Depends(container.user_service)]
-IProfileService = Annotated[ProfileService, Depends(container.profile_service)]
-ITagService = Annotated[TagService, Depends(container.tag_service)]
-IArticleService = Annotated[ArticleService, Depends(container.article_service)]
-ICommentService = Annotated[CommentService, Depends(container.comment_service)]
+IAuthTokenService = Annotated[AuthTokenService, Depends(get_auth_token_service)]
+IUserAuthService = Annotated[UserAuthService, Depends(get_user_auth_service)]
+IUserService = Annotated[UserService, Depends(get_user_service)]
+IProfileService = Annotated[ProfileService, Depends(get_profile_service)]
+ITagService = Annotated[TagService, Depends(get_tag_service)]
+IArticleService = Annotated[ArticleService, Depends(get_article_service)]
+ICommentService = Annotated[CommentService, Depends(get_comment_service)]
 
 DEFAULT_ARTICLES_LIMIT = 20
 DEFAULT_ARTICLES_OFFSET = 0
