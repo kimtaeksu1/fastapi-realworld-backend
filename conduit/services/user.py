@@ -10,12 +10,15 @@ from conduit.core.exceptions import (
 )
 from conduit.domain.dtos.user import (
     CreateUserDTO,
+    CreateUserRecordDTO,
     UpdatedUserDTO,
     UpdateUserDTO,
+    UpdateUserRecordDTO,
     UserDTO,
 )
 from conduit.domain.repositories.user import IUserRepository
 from conduit.domain.services.user import IUserService
+from conduit.services.password import get_password_hash
 
 
 class UserService(IUserService):
@@ -37,9 +40,14 @@ class UserService(IUserService):
         ):
             raise UserNameAlreadyTakenException()
 
+        create_user_record = CreateUserRecordDTO(
+            username=user_to_create.username,
+            email=user_to_create.email,
+            password_hash=get_password_hash(user_to_create.password),
+        )
         try:
             return await self._user_repo.add(
-                session=session, create_item=user_to_create
+                session=session, create_item=create_user_record
             )
         except (NoResultFound, MultipleResultsFound) as exc:
             raise UserCreateException() from exc
@@ -78,8 +86,19 @@ class UserService(IUserService):
             ):
                 raise EmailAlreadyTakenException()
 
+        update_record = UpdateUserRecordDTO(
+            username=user_to_update.username,
+            email=user_to_update.email,
+            password_hash=(
+                get_password_hash(user_to_update.password)
+                if user_to_update.password is not None
+                else None
+            ),
+            bio=user_to_update.bio,
+            image_url=user_to_update.image_url,
+        )
         updated_user = await self._user_repo.update(
-            session=session, user_id=current_user.id, update_item=user_to_update
+            session=session, user_id=current_user.id, update_item=update_record
         )
         return UpdatedUserDTO(
             id=updated_user.id,

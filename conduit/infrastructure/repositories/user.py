@@ -5,22 +5,23 @@ from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from conduit.core.exceptions import UserNotFoundException
-from conduit.domain.dtos.user import CreateUserDTO, UpdateUserDTO, UserDTO
+from conduit.domain.dtos.user import CreateUserRecordDTO, UpdateUserRecordDTO, UserDTO
 from conduit.domain.repositories.user import IUserRepository
 from conduit.infrastructure.models import User
-from conduit.services.password import get_password_hash
 
 
 class UserRepository(IUserRepository):
     """Repository for User model."""
 
-    async def add(self, session: AsyncSession, create_item: CreateUserDTO) -> UserDTO:
+    async def add(
+        self, session: AsyncSession, create_item: CreateUserRecordDTO
+    ) -> UserDTO:
         query = (
             insert(User)
             .values(
                 username=create_item.username,
                 email=create_item.email,
-                password_hash=get_password_hash(create_item.password),
+                password_hash=create_item.password_hash,
                 image_url="https://api.realworld.io/images/smiley-cyrus.jpeg",
                 bio="",
                 created_at=datetime.now(),
@@ -78,7 +79,7 @@ class UserRepository(IUserRepository):
         return self._to_user_dto(user)
 
     async def update(
-        self, session: AsyncSession, user_id: int, update_item: UpdateUserDTO
+        self, session: AsyncSession, user_id: int, update_item: UpdateUserRecordDTO
     ) -> UserDTO:
         query = (
             update(User)
@@ -90,8 +91,8 @@ class UserRepository(IUserRepository):
             query = query.values(username=update_item.username)
         if update_item.email is not None:
             query = query.values(email=update_item.email)
-        if update_item.password is not None:
-            query = query.values(password_hash=get_password_hash(update_item.password))
+        if update_item.password_hash is not None:
+            query = query.values(password_hash=update_item.password_hash)
         if update_item.bio is not None:
             query = query.values(bio=update_item.bio)
         if update_item.image_url is not None:

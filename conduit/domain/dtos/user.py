@@ -49,6 +49,13 @@ class CreateUserDTO:
 
 
 @dataclass(frozen=True)
+class CreateUserRecordDTO:
+    username: str
+    email: str
+    password_hash: str
+
+
+@dataclass(frozen=True)
 class LoginUserDTO:
     email: str
     password: str
@@ -59,5 +66,14 @@ class UpdateUserDTO:
     username: str | None = None
     email: str | None = None
     password: str | None = None
+    bio: str | None = None
+    image_url: str | None = None
+
+
+@dataclass(frozen=True)
+class UpdateUserRecordDTO:
+    username: str | None = None
+    email: str | None = None
+    password_hash: str | None = None
     bio: str | None = None
     image_url: str | None = None

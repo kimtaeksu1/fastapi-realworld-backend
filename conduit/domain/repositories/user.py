@@ -2,14 +2,14 @@ import abc
 from collections.abc import Collection, Mapping
 from typing import Any
 
-from conduit.domain.dtos.user import CreateUserDTO, UpdateUserDTO, UserDTO
+from conduit.domain.dtos.user import CreateUserRecordDTO, UpdateUserRecordDTO, UserDTO
 
 
 class IUserRepository(abc.ABC):
     """User repository interface."""
 
     @abc.abstractmethod
-    async def add(self, session: Any, create_item: CreateUserDTO) -> UserDTO: ...
+    async def add(self, session: Any, create_item: CreateUserRecordDTO) -> UserDTO: ...
 
     @abc.abstractmethod
     async def get_or_none(self, session: Any, user_id: int) -> UserDTO | None: ...
@@ -40,5 +40,5 @@ class IUserRepository(abc.ABC):
 
     @abc.abstractmethod
     async def update(
-        self, session: Any, user_id: int, update_item: UpdateUserDTO
+        self, session: Any, user_id: int, update_item: UpdateUserRecordDTO
     ) -> UserDTO: ...

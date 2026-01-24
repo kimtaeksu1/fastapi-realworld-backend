@@ -19,6 +19,7 @@ from conduit.domain.dtos.article import ArticleDTO, CreateArticleDTO
 from conduit.domain.dtos.user import CreateUserDTO, UserDTO
 from conduit.domain.repositories.article import IArticleRepository
 from conduit.domain.repositories.user import IUserRepository
+from conduit.domain.services.user import IUserService
 from conduit.infrastructure.models import Base
 
 SetupFixture: TypeAlias = None
@@ -101,6 +102,11 @@ def auth_token_service(di_container: Container) -> IAuthTokenService:
 
 
 @pytest.fixture
+def user_service(di_container: Container) -> IUserService:
+    return di_container.user_service()
+
+
+@pytest.fixture
 def user_to_create() -> CreateUserDTO:
     return CreateUserDTO(username="test", email="test@gmail.com", password="password")
 
@@ -131,11 +137,11 @@ def not_exists_user() -> UserDTO:
 
 @pytest.fixture
 async def test_user(
-    session: AsyncSession,
-    user_repository: IUserRepository,
-    user_to_create: CreateUserDTO,
+    session: AsyncSession, user_service: IUserService, user_to_create: CreateUserDTO
 ) -> UserDTO:
-    return await user_repository.add(session=session, create_item=user_to_create)
+    return await user_service.create_user(
+        session=session, user_to_create=user_to_create
+    )
 
 
 @pytest.fixture

@@ -2,17 +2,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from conduit.domain.dtos.article import ArticleRecordDTO, CreateArticleDTO
 from conduit.domain.dtos.user import CreateUserDTO, UserDTO
+from conduit.domain.services.user import IUserService
 from conduit.infrastructure.repositories.article import ArticleRepository
-from conduit.infrastructure.repositories.user import UserRepository
 
 
 async def create_another_test_user(
-    session: AsyncSession, user_repository: UserRepository
+    session: AsyncSession, user_service: IUserService
 ) -> UserDTO:
     create_user_dto = CreateUserDTO(
         username="temp-user", email="temp-user@gmail.com", password="password"
     )
-    return await user_repository.add(session=session, create_item=create_user_dto)
+    return await user_service.create_user(
+        session=session, user_to_create=create_user_dto
+    )
 
 
 async def create_another_test_article(

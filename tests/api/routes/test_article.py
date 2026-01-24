@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from conduit.api.schemas.responses.article import ArticleResponse
 from conduit.domain.dtos.article import ArticleDTO
+from conduit.domain.services.user import IUserService
 from conduit.infrastructure.repositories.article import ArticleRepository
-from conduit.infrastructure.repositories.user import UserRepository
 from tests.utils import create_another_test_article, create_another_test_user
 
 
@@ -117,11 +117,11 @@ async def test_user_can_retrieve_article_if_exists(
 async def test_user_can_not_delete_foreign_article(
     authorized_test_client: AsyncClient,
     session: AsyncSession,
-    user_repository: UserRepository,
+    user_service: IUserService,
     article_repository: ArticleRepository,
 ) -> None:
     new_user = await create_another_test_user(
-        session=session, user_repository=user_repository
+        session=session, user_service=user_service
     )
     new_article = await create_another_test_article(
         session=session, article_repository=article_repository, author_id=new_user.id
@@ -134,11 +134,11 @@ async def test_user_can_not_delete_foreign_article(
 async def test_user_can_not_update_foreign_article(
     authorized_test_client: AsyncClient,
     session: AsyncSession,
-    user_repository: UserRepository,
+    user_service: IUserService,
     article_repository: ArticleRepository,
 ) -> None:
     new_user = await create_another_test_user(
-        session=session, user_repository=user_repository
+        session=session, user_service=user_service
     )
     new_article = await create_another_test_article(
         session=session, article_repository=article_repository, author_id=new_user.id
