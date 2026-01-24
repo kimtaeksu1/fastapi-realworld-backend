@@ -65,12 +65,13 @@ async def get_current_user_or_none(
     auth_token_service: IAuthTokenService,
     user_service: IUserService,
 ) -> UserDTO | None:
-    if token:
-        jwt_user = auth_token_service.parse_jwt_token(token=token)
-        current_user_dto = await user_service.get_user_by_id(
-            session=session, user_id=jwt_user.user_id
-        )
-        return current_user_dto
+    if token is None:
+        return None
+    jwt_user = auth_token_service.parse_jwt_token(token=token)
+    current_user_dto = await user_service.get_user_by_id(
+        session=session, user_id=jwt_user.user_id
+    )
+    return current_user_dto
 
 
 async def get_current_user(
