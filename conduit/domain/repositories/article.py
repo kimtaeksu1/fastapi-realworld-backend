@@ -36,26 +36,10 @@ class IArticleRepository(abc.ABC):
     @abc.abstractmethod
     async def list_by_followings(
         self, session: Any, user_id: int, limit: int, offset: int
-    ) -> list[ArticleRecordDTO]: ...
-
-    @abc.abstractmethod
-    async def list_by_followings_v2(
-        self, session: Any, user_id: int, limit: int, offset: int
     ) -> list[ArticleDTO]: ...
 
     @abc.abstractmethod
     async def list_by_filters(
-        self,
-        session: Any,
-        limit: int,
-        offset: int,
-        tag: str | None = None,
-        author: str | None = None,
-        favorited: str | None = None,
-    ) -> list[ArticleRecordDTO]: ...
-
-    @abc.abstractmethod
-    async def list_by_filters_v2(
         self,
         session: Any,
         user_id: int | None,

@@ -28,7 +28,7 @@ async def get_article_feed(
     """
     Get article feed from following users.
     """
-    articles_feed_dto = await article_service.get_articles_feed_v2(
+    articles_feed_dto = await article_service.get_articles_feed(
         session=session,
         current_user=current_user,
         limit=pagination.limit,
@@ -48,7 +48,7 @@ async def get_global_article_feed(
     """
     Get global article feed.
     """
-    articles_feed_dto = await article_service.get_articles_by_filters_v2(
+    articles_feed_dto = await article_service.get_articles_by_filters(
         session=session,
         current_user=current_user,
         tag=articles_filters.tag,

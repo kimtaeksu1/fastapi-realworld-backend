@@ -105,39 +105,6 @@ class ArticleRepository(IArticleRepository):
 
     async def list_by_followings(
         self, session: AsyncSession, user_id: int, limit: int, offset: int
-    ) -> list[ArticleRecordDTO]:
-        query = (
-            (
-                select(
-                    Article.id,
-                    Article.author_id,
-                    Article.slug,
-                    Article.title,
-                    Article.description,
-                    Article.body,
-                    Article.created_at,
-                    Article.updated_at,
-                    User.username,
-                    User.bio,
-                    User.image_url,
-                )
-            )
-            .join(
-                Follower,
-                (
-                    (Follower.following_id == Article.author_id)
-                    & (Follower.follower_id == user_id)
-                ),
-            )
-            .join(User, (User.id == Article.author_id))
-            .order_by(Article.created_at)
-        )
-        query = query.limit(limit).offset(offset)
-        articles = await session.execute(query)
-        return [self._article_mapper.to_dto(article) for article in articles]
-
-    async def list_by_followings_v2(
-        self, session: AsyncSession, user_id: int, limit: int, offset: int
     ) -> list[ArticleDTO]:
         query = (
             select(
@@ -201,66 +168,6 @@ class ArticleRepository(IArticleRepository):
         return [self._to_article_dto(article) for article in articles]
 
     async def list_by_filters(
-        self,
-        session: AsyncSession,
-        limit: int,
-        offset: int,
-        tag: str | None = None,
-        author: str | None = None,
-        favorited: str | None = None,
-    ) -> list[ArticleRecordDTO]:
-        query = (
-            select(
-                Article.id,
-                Article.author_id,
-                Article.slug,
-                Article.title,
-                Article.description,
-                Article.body,
-                Article.created_at,
-                Article.updated_at,
-            )
-        ).order_by(Article.created_at)
-
-        if tag:
-            # fmt: off
-            query = query.join(
-                ArticleTag,
-                (Article.id == ArticleTag.article_id),
-            ).where(
-                ArticleTag.tag_id == select(Tag.id).where(
-                    Tag.tag == tag
-                ).scalar_subquery()
-            )
-            # fmt: on
-
-        if author:
-            # fmt: off
-            query = query.join(
-                User,
-                (User.id == Article.author_id)
-            ).where(
-                User.username == author
-            )
-            # fmt: on
-
-        if favorited:
-            # fmt: off
-            query = query.join(
-                Favorite,
-                (Favorite.article_id == Article.id)
-            ).where(
-                Favorite.user_id == select(User.id).where(
-                    User.username == favorited
-                ).scalar_subquery()
-            )
-            # fmt: on
-
-        query = query.limit(limit).offset(offset)
-        articles = await session.execute(query)
-        return [self._article_mapper.to_dto(article) for article in articles]
-
-    async def list_by_filters_v2(
         self,
         session: AsyncSession,
         user_id: int | None,

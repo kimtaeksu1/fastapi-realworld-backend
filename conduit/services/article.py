@@ -123,43 +123,6 @@ class ArticleService(IArticleService):
     ) -> ArticlesFeedDTO:
         articles = await self._article_repo.list_by_filters(
             session=session,
-            limit=limit,
-            offset=offset,
-            tag=tag,
-            author=author,
-            favorited=favorited,
-        )
-        profiles_map = await self._get_profiles_mapping(
-            session=session, articles=articles, current_user=current_user
-        )
-        articles_with_extra = [
-            await self._get_article_info(
-                session=session,
-                article=article,
-                profile=profiles_map[article.author_id],
-                user_id=current_user.id if current_user else None,
-            )
-            for article in articles
-        ]
-        articles_count = await self._article_repo.count_by_filters(
-            session=session, tag=tag, author=author, favorited=favorited
-        )
-        return ArticlesFeedDTO(
-            articles=articles_with_extra, articles_count=articles_count
-        )
-
-    async def get_articles_by_filters_v2(
-        self,
-        session: AsyncSession,
-        current_user: UserDTO | None,
-        limit: int,
-        offset: int,
-        tag: str | None = None,
-        author: str | None = None,
-        favorited: str | None = None,
-    ) -> ArticlesFeedDTO:
-        articles = await self._article_repo.list_by_filters_v2(
-            session=session,
             user_id=current_user.id if current_user else None,
             limit=limit,
             offset=offset,
@@ -176,31 +139,6 @@ class ArticleService(IArticleService):
         self, session: AsyncSession, current_user: UserDTO, limit: int, offset: int
     ) -> ArticlesFeedDTO:
         articles = await self._article_repo.list_by_followings(
-            session=session, user_id=current_user.id, limit=limit, offset=offset
-        )
-        profiles_map = await self._get_profiles_mapping(
-            session=session, articles=articles, current_user=current_user
-        )
-        articles_with_extra = [
-            await self._get_article_info(
-                session=session,
-                article=article,
-                profile=profiles_map[article.author_id],
-                user_id=current_user.id,
-            )
-            for article in articles
-        ]
-        articles_count = await self._article_repo.count_by_followings(
-            session=session, user_id=current_user.id
-        )
-        return ArticlesFeedDTO(
-            articles=articles_with_extra, articles_count=articles_count
-        )
-
-    async def get_articles_feed_v2(
-        self, session: AsyncSession, current_user: UserDTO, limit: int, offset: int
-    ) -> ArticlesFeedDTO:
-        articles = await self._article_repo.list_by_followings_v2(
             session=session, user_id=current_user.id, limit=limit, offset=offset
         )
         articles_count = await self._article_repo.count_by_followings(
