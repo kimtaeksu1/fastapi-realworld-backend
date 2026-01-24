@@ -1,9 +1,11 @@
 from dataclasses import asdict
 
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from conduit.core.exceptions import (
     ArticleAlreadyFavoritedException,
+    ArticleCreateException,
     ArticleNotFavoritedException,
     ArticlePermissionException,
 )
@@ -43,9 +45,12 @@ class ArticleService(IArticleService):
     async def create_new_article(
         self, session: AsyncSession, author_id: int, article_to_create: CreateArticleDTO
     ) -> ArticleDTO:
-        article = await self._article_repo.add(
-            session=session, author_id=author_id, create_item=article_to_create
-        )
+        try:
+            article = await self._article_repo.add(
+                session=session, author_id=author_id, create_item=article_to_create
+            )
+        except (NoResultFound, MultipleResultsFound) as exc:
+            raise ArticleCreateException() from exc
         profile = await self._profile_service.get_profile_by_user_id(
             session=session, user_id=author_id
         )

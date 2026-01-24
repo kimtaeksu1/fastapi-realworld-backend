@@ -20,12 +20,12 @@ class FavoriteRepository(IFavoriteRepository):
             .select()
         )
         result = await session.execute(query)
-        return result.scalar()
+        return result.scalar_one() is True
 
     async def count(self, session: AsyncSession, article_id: int) -> int:
         query = select(count()).where(Favorite.article_id == article_id)
         result = await session.execute(query)
-        return result.scalar()
+        return int(result.scalar_one())
 
     async def create(
         self, session: AsyncSession, article_id: int, user_id: int

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import case, delete, exists, func, insert, select, true, update
+from sqlalchemy import delete, exists, func, insert, select, true, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql.functions import count
@@ -243,23 +243,6 @@ class ArticleRepository(IArticleRepository):
             .outerjoin(ArticleTag, Article.id == ArticleTag.article_id)
             .outerjoin(FavoriteAlias, FavoriteAlias.article_id == Article.id)
             .outerjoin(Tag, Tag.id == ArticleTag.tag_id)
-            .filter(
-                # Filter by author username if provided.
-                case((author is not None, User.username == author), else_=True),
-                # Filter by tag if provided.
-                case((tag is not None, Tag.tag == tag), else_=True),
-                # Filter by "favorited by" username if provided.
-                case(
-                    (
-                        favorited is not None,
-                        FavoriteAlias.user_id
-                        == select(User.id)
-                        .where(User.username == favorited)
-                        .scalar_subquery(),
-                    ),
-                    else_=True,
-                ),
-            )
             .group_by(
                 Article.id,
                 Article.author_id,
@@ -278,6 +261,18 @@ class ArticleRepository(IArticleRepository):
             # fmt: on
         )
 
+        if author is not None:
+            query = query.where(User.username == author)
+
+        if tag is not None:
+            query = query.where(Tag.tag == tag)
+
+        if favorited is not None:
+            favorited_user_id = (
+                select(User.id).where(User.username == favorited).scalar_subquery()
+            )
+            query = query.where(FavoriteAlias.user_id == favorited_user_id)
+
         query = query.limit(limit).offset(offset)
         articles = await session.execute(query)
         return [self._to_article_feed_record_dto(article) for article in articles]
@@ -291,7 +286,7 @@ class ArticleRepository(IArticleRepository):
             ),
         )
         result = await session.execute(query)
-        return result.scalar() or 0
+        return int(result.scalar_one())
 
     async def count_by_filters(
         self,
@@ -337,4 +332,4 @@ class ArticleRepository(IArticleRepository):
             # fmt: on
 
         result = await session.execute(query)
-        return result.scalar() or 0
+        return int(result.scalar_one())

@@ -86,6 +86,13 @@ class ArticlePermissionException(BaseInternalException):
     _message = "Current user does not have permission to access the article."
 
 
+class ArticleCreateException(BaseInternalException):
+    """Exception raised when article could not be created."""
+
+    _status_code = 500
+    _message = "Failed to create article."
+
+
 class CommentNotFoundException(BaseInternalException):
     """Exception raised when comment not found in database."""
 
@@ -98,6 +105,13 @@ class CommentPermissionException(BaseInternalException):
 
     _status_code = 403
     _message = "Current user does not have permission to access the comment."
+
+
+class CommentCreateException(BaseInternalException):
+    """Exception raised when comment could not be created."""
+
+    _status_code = 500
+    _message = "Failed to create comment."
 
 
 class EmailAlreadyTakenException(BaseInternalException):
@@ -125,6 +139,13 @@ class IncorrectLoginInputException(BaseInternalException):
         "email": ["incorrect email or password."],
         "password": ["incorrect email or password."],
     }
+
+
+class UserCreateException(BaseInternalException):
+    """Exception raised when user could not be created."""
+
+    _status_code = 500
+    _message = "Failed to create user."
 
 
 class IncorrectJWTTokenException(BaseInternalException):

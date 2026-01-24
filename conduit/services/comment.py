@@ -1,6 +1,7 @@
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from conduit.core.exceptions import CommentPermissionException
+from conduit.core.exceptions import CommentCreateException, CommentPermissionException
 from conduit.domain.dtos.comment import (
     CommentDTO,
     CommentRecordDTO,
@@ -16,7 +17,6 @@ from conduit.domain.services.profile import IProfileService
 
 
 class CommentService(ICommentService):
-
     def __init__(
         self,
         article_repo: IArticleRepository,
@@ -42,12 +42,15 @@ class CommentService(ICommentService):
             image=current_user.image_url,
             following=False,
         )
-        comment_record_dto = await self._comment_repo.add(
-            session=session,
-            author_id=current_user.id,
-            article_id=article.id,
-            create_item=comment_to_create,
-        )
+        try:
+            comment_record_dto = await self._comment_repo.add(
+                session=session,
+                author_id=current_user.id,
+                article_id=article.id,
+                create_item=comment_to_create,
+            )
+        except (NoResultFound, MultipleResultsFound) as exc:
+            raise CommentCreateException() from exc
         return CommentDTO(
             id=comment_record_dto.id,
             body=comment_record_dto.body,

@@ -1,9 +1,11 @@
 from collections.abc import Collection
 
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from conduit.core.exceptions import (
     EmailAlreadyTakenException,
+    UserCreateException,
     UserNameAlreadyTakenException,
 )
 from conduit.domain.dtos.user import (
@@ -35,7 +37,12 @@ class UserService(IUserService):
         ):
             raise UserNameAlreadyTakenException()
 
-        return await self._user_repo.add(session=session, create_item=user_to_create)
+        try:
+            return await self._user_repo.add(
+                session=session, create_item=user_to_create
+            )
+        except (NoResultFound, MultipleResultsFound) as exc:
+            raise UserCreateException() from exc
 
     async def get_user_by_id(self, session: AsyncSession, user_id: int) -> UserDTO:
         return await self._user_repo.get(session=session, user_id=user_id)

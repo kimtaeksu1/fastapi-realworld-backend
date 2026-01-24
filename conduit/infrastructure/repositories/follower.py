@@ -22,7 +22,7 @@ class FollowerRepository(IFollowerRepository):
             .select()
         )
         result = await session.execute(query)
-        return result.scalar()
+        return result.scalar_one() is True
 
     async def list(
         self, session: AsyncSession, follower_id: int, following_ids: list[int]
