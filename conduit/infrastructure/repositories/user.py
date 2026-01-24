@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from conduit.core.exceptions import UserNotFoundException
 from conduit.domain.dtos.user import CreateUserDTO, UpdateUserDTO, UserDTO
-from conduit.domain.mapper import IModelMapper
 from conduit.domain.repositories.user import IUserRepository
 from conduit.infrastructure.models import User
 from conduit.services.password import get_password_hash
@@ -14,9 +13,6 @@ from conduit.services.password import get_password_hash
 
 class UserRepository(IUserRepository):
     """Repository for User model."""
-
-    def __init__(self, user_mapper: IModelMapper[User, UserDTO]):
-        self._user_mapper = user_mapper
 
     async def add(self, session: AsyncSession, create_item: CreateUserDTO) -> UserDTO:
         query = (
@@ -32,51 +28,54 @@ class UserRepository(IUserRepository):
             .returning(User)
         )
         result = await session.execute(query)
-        return self._user_mapper.to_dto(result.scalar())
+        return self._to_user_dto(result.scalar_one())
 
     async def get_by_email_or_none(
         self, session: AsyncSession, email: str
     ) -> UserDTO | None:
         query = select(User).where(User.email == email)
         if user := await session.scalar(query):
-            return self._user_mapper.to_dto(user)
+            return self._to_user_dto(user)
+        return None
 
     async def get_by_email(self, session: AsyncSession, email: str) -> UserDTO:
         query = select(User).where(User.email == email)
         if not (user := await session.scalar(query)):
             raise UserNotFoundException()
-        return self._user_mapper.to_dto(user)
+        return self._to_user_dto(user)
 
     async def get_or_none(self, session: AsyncSession, user_id: int) -> UserDTO | None:
         query = select(User).where(User.id == user_id)
         if user := await session.scalar(query):
-            return self._user_mapper.to_dto(user)
+            return self._to_user_dto(user)
+        return None
 
     async def get(self, session: AsyncSession, user_id: int) -> UserDTO:
         query = select(User).where(User.id == user_id)
         if not (user := await session.scalar(query)):
             raise UserNotFoundException()
-        return self._user_mapper.to_dto(user)
+        return self._to_user_dto(user)
 
     async def list_by_users(
         self, session: AsyncSession, user_ids: Collection[int]
     ) -> list[UserDTO]:
         query = select(User).where(User.id.in_(user_ids))
         users = await session.scalars(query)
-        return [self._user_mapper.to_dto(user) for user in users]
+        return [self._to_user_dto(user) for user in users]
 
     async def get_by_username_or_none(
         self, session: AsyncSession, username: str
     ) -> UserDTO | None:
         query = select(User).where(User.username == username)
         if user := await session.scalar(query):
-            return self._user_mapper.to_dto(user)
+            return self._to_user_dto(user)
+        return None
 
     async def get_by_username(self, session: AsyncSession, username: str) -> UserDTO:
         query = select(User).where(User.username == username)
         if not (user := await session.scalar(query)):
             raise UserNotFoundException()
-        return self._user_mapper.to_dto(user)
+        return self._to_user_dto(user)
 
     async def update(
         self, session: AsyncSession, user_id: int, update_item: UpdateUserDTO
@@ -99,4 +98,17 @@ class UserRepository(IUserRepository):
             query = query.values(image_url=update_item.image_url)
 
         result = await session.execute(query)
-        return self._user_mapper.to_dto(result.scalar())
+        return self._to_user_dto(result.scalar_one())
+
+    @staticmethod
+    def _to_user_dto(model: User) -> UserDTO:
+        dto = UserDTO(
+            username=model.username,
+            email=model.email,
+            password_hash=model.password_hash,
+            bio=model.bio,
+            image_url=model.image_url,
+            created_at=model.created_at,
+        )
+        dto.id = model.id
+        return dto

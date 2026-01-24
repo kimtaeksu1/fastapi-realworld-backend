@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from conduit.core.config import get_app_settings
 from conduit.core.settings.base import BaseAppSettings
-from conduit.domain.mapper import IModelMapper
 from conduit.domain.repositories.article import IArticleRepository
 from conduit.domain.repositories.article_tag import IArticleTagRepository
 from conduit.domain.repositories.comment import ICommentRepository
@@ -20,10 +19,6 @@ from conduit.domain.services.comment import ICommentService
 from conduit.domain.services.profile import IProfileService
 from conduit.domain.services.tag import ITagService
 from conduit.domain.services.user import IUserService
-from conduit.infrastructure.mappers.article import ArticleModelMapper
-from conduit.infrastructure.mappers.comment import CommentModelMapper
-from conduit.infrastructure.mappers.tag import TagModelMapper
-from conduit.infrastructure.mappers.user import UserModelMapper
 from conduit.infrastructure.repositories.article import ArticleRepository
 from conduit.infrastructure.repositories.article_tag import ArticleTagRepository
 from conduit.infrastructure.repositories.comment import CommentRepository
@@ -71,40 +66,24 @@ class Container:
             finally:
                 await session.close()
 
-    @staticmethod
-    def user_model_mapper() -> IModelMapper:
-        return UserModelMapper()
-
-    @staticmethod
-    def tag_model_mapper() -> IModelMapper:
-        return TagModelMapper()
-
-    @staticmethod
-    def article_model_mapper() -> IModelMapper:
-        return ArticleModelMapper()
-
-    @staticmethod
-    def comment_model_mapper() -> IModelMapper:
-        return CommentModelMapper()
-
     def user_repository(self) -> IUserRepository:
-        return UserRepository(user_mapper=self.user_model_mapper())
+        return UserRepository()
 
     @staticmethod
     def follower_repository() -> IFollowerRepository:
         return FollowerRepository()
 
     def tags_repository(self) -> ITagRepository:
-        return TagRepository(tag_mapper=self.tag_model_mapper())
+        return TagRepository()
 
     def article_repository(self) -> IArticleRepository:
-        return ArticleRepository(article_mapper=self.article_model_mapper())
+        return ArticleRepository()
 
     def article_tag_repository(self) -> IArticleTagRepository:
-        return ArticleTagRepository(tag_mapper=self.tag_model_mapper())
+        return ArticleTagRepository()
 
     def comment_repository(self) -> ICommentRepository:
-        return CommentRepository(comment_mapper=self.comment_model_mapper())
+        return CommentRepository()
 
     @staticmethod
     def favorite_repository() -> IFavoriteRepository:

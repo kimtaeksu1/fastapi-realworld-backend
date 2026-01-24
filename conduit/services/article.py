@@ -10,6 +10,7 @@ from conduit.core.exceptions import (
 from conduit.domain.dtos.article import (
     ArticleAuthorDTO,
     ArticleDTO,
+    ArticleFeedRecordDTO,
     ArticleRecordDTO,
     ArticlesFeedDTO,
     CreateArticleDTO,
@@ -130,10 +131,15 @@ class ArticleService(IArticleService):
             author=author,
             favorited=favorited,
         )
+        articles_with_extra = [
+            self._to_article_dto_from_feed_record(article) for article in articles
+        ]
         articles_count = await self._article_repo.count_by_filters(
             session=session, tag=tag, author=author, favorited=favorited
         )
-        return ArticlesFeedDTO(articles=articles, articles_count=articles_count)
+        return ArticlesFeedDTO(
+            articles=articles_with_extra, articles_count=articles_count
+        )
 
     async def get_articles_feed(
         self, session: AsyncSession, current_user: UserDTO, limit: int, offset: int
@@ -141,10 +147,15 @@ class ArticleService(IArticleService):
         articles = await self._article_repo.list_by_followings(
             session=session, user_id=current_user.id, limit=limit, offset=offset
         )
+        articles_with_extra = [
+            self._to_article_dto_from_feed_record(article) for article in articles
+        ]
         articles_count = await self._article_repo.count_by_followings(
             session=session, user_id=current_user.id
         )
-        return ArticlesFeedDTO(articles=articles, articles_count=articles_count)
+        return ArticlesFeedDTO(
+            articles=articles_with_extra, articles_count=articles_count
+        )
 
     async def add_article_into_favorites(
         self, session: AsyncSession, slug: str, current_user: UserDTO
@@ -232,3 +243,25 @@ class ArticleService(IArticleService):
             current_user=current_user,
         )
         return {profile.user_id: profile for profile in following_profiles}
+
+    @staticmethod
+    def _to_article_dto_from_feed_record(record: ArticleFeedRecordDTO) -> ArticleDTO:
+        return ArticleDTO(
+            id=record.id,
+            author_id=record.author_id,
+            slug=record.slug,
+            title=record.title,
+            description=record.description,
+            body=record.body,
+            tags=record.tags,
+            author=ArticleAuthorDTO(
+                username=record.author_username,
+                bio=record.author_bio or "",
+                image=record.author_image_url,
+                following=record.author_following,
+            ),
+            created_at=record.created_at,
+            updated_at=record.updated_at,
+            favorited=record.favorited,
+            favorites_count=record.favorites_count,
+        )

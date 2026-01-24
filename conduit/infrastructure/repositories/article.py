@@ -13,13 +13,11 @@ from conduit.core.utils.slug import (
     make_slug_from_title_and_code,
 )
 from conduit.domain.dtos.article import (
-    ArticleAuthorDTO,
-    ArticleDTO,
+    ArticleFeedRecordDTO,
     ArticleRecordDTO,
     CreateArticleDTO,
     UpdateArticleDTO,
 )
-from conduit.domain.mapper import IModelMapper
 from conduit.domain.repositories.article import IArticleRepository
 from conduit.infrastructure.models import (
     Article,
@@ -35,9 +33,39 @@ FavoriteAlias = aliased(Favorite)
 
 
 class ArticleRepository(IArticleRepository):
+    @staticmethod
+    def _to_article_record_dto(model: Article) -> ArticleRecordDTO:
+        return ArticleRecordDTO(
+            id=model.id,
+            author_id=model.author_id,
+            slug=model.slug,
+            title=model.title,
+            description=model.description,
+            body=model.body,
+            created_at=model.created_at,
+            updated_at=model.updated_at,
+        )
 
-    def __init__(self, article_mapper: IModelMapper[Article, ArticleRecordDTO]):
-        self._article_mapper = article_mapper
+    @staticmethod
+    def _to_article_feed_record_dto(res: Any) -> ArticleFeedRecordDTO:
+        tags = res.tags.split(", ") if res.tags else []
+        return ArticleFeedRecordDTO(
+            id=res.id,
+            author_id=res.author_id,
+            slug=res.slug,
+            title=res.title,
+            description=res.description,
+            body=res.body,
+            tags=tags,
+            author_username=res.username,
+            author_bio=res.bio,
+            author_image_url=res.image_url,
+            author_following=res.following,
+            created_at=res.created_at,
+            updated_at=res.updated_at,
+            favorited=res.favorited,
+            favorites_count=res.favorites_count,
+        )
 
     async def add(
         self, session: AsyncSession, author_id: int, create_item: CreateArticleDTO
@@ -56,7 +84,7 @@ class ArticleRepository(IArticleRepository):
             .returning(Article)
         )
         result = await session.execute(query)
-        return self._article_mapper.to_dto(result.scalar())
+        return self._to_article_record_dto(result.scalar_one())
 
     async def get_by_slug_or_none(
         self, session: AsyncSession, slug: str
@@ -66,7 +94,7 @@ class ArticleRepository(IArticleRepository):
             Article.slug == slug or Article.slug.contains(slug_unique_part)
         )
         if article := await session.scalar(query):
-            return self._article_mapper.to_dto(article)
+            return self._to_article_record_dto(article)
 
     async def get_by_slug(self, session: AsyncSession, slug: str) -> ArticleRecordDTO:
         slug_unique_part = get_slug_unique_part(slug=slug)
@@ -75,7 +103,7 @@ class ArticleRepository(IArticleRepository):
         )
         if not (article := await session.scalar(query)):
             raise ArticleNotFoundException()
-        return self._article_mapper.to_dto(article)
+        return self._to_article_record_dto(article)
 
     async def delete_by_slug(self, session: AsyncSession, slug: str) -> None:
         query = delete(Article).where(Article.slug == slug)
@@ -101,11 +129,13 @@ class ArticleRepository(IArticleRepository):
             query = query.values(body=update_item.body)
 
         article = await session.scalar(query)
-        return self._article_mapper.to_dto(article)
+        if article is None:
+            raise ArticleNotFoundException()
+        return self._to_article_record_dto(article)
 
     async def list_by_followings(
         self, session: AsyncSession, user_id: int, limit: int, offset: int
-    ) -> list[ArticleDTO]:
+    ) -> list[ArticleFeedRecordDTO]:
         query = (
             select(
                 Article.id.label("id"),
@@ -116,10 +146,8 @@ class ArticleRepository(IArticleRepository):
                 Article.body.label("body"),
                 Article.created_at.label("created_at"),
                 Article.updated_at.label("updated_at"),
-                User.id.label("user_id"),
                 User.username.label("username"),
                 User.bio.label("bio"),
-                User.email.label("email"),
                 User.image_url.label("image_url"),
                 true().label("following"),
                 # Subquery for favorites count.
@@ -165,7 +193,7 @@ class ArticleRepository(IArticleRepository):
         query = query.limit(limit).offset(offset)
         articles = await session.execute(query)
 
-        return [self._to_article_dto(article) for article in articles]
+        return [self._to_article_feed_record_dto(article) for article in articles]
 
     async def list_by_filters(
         self,
@@ -176,7 +204,7 @@ class ArticleRepository(IArticleRepository):
         tag: str | None = None,
         author: str | None = None,
         favorited: str | None = None,
-    ) -> list[ArticleDTO]:
+    ) -> list[ArticleFeedRecordDTO]:
         query = (
             # fmt: off
             select(
@@ -188,28 +216,24 @@ class ArticleRepository(IArticleRepository):
                 Article.body.label("body"),
                 Article.created_at.label("created_at"),
                 Article.updated_at.label("updated_at"),
-                User.id.label("user_id"),
                 User.username.label("username"),
                 User.bio.label("bio"),
-                User.email.label("email"),
                 User.image_url.label("image_url"),
                 exists()
                 .where(
-                    (Follower.follower_id == user_id) &
-                    (Follower.following_id == Article.author_id)
+                    (Follower.follower_id == user_id)
+                    & (Follower.following_id == Article.author_id)
                 )
                 .label("following"),
                 # Subquery for favorites count.
-                select(
-                    func.count(Favorite.article_id)
-                ).where(
-                    Favorite.article_id == Article.id).scalar_subquery()
+                select(func.count(Favorite.article_id))
+                .where(Favorite.article_id == Article.id)
+                .scalar_subquery()
                 .label("favorites_count"),
                 # Subquery to check if favorited by user with id `user_id`.
                 exists()
                 .where(
-                    (Favorite.user_id == user_id) &
-                    (Favorite.article_id == Article.id)
+                    (Favorite.user_id == user_id) & (Favorite.article_id == Article.id)
                 )
                 .label("favorited"),
                 # Concatenate tags.
@@ -228,7 +252,8 @@ class ArticleRepository(IArticleRepository):
                 case(
                     (
                         favorited is not None,
-                        FavoriteAlias.user_id == select(User.id)
+                        FavoriteAlias.user_id
+                        == select(User.id)
                         .where(User.username == favorited)
                         .scalar_subquery(),
                     ),
@@ -255,7 +280,7 @@ class ArticleRepository(IArticleRepository):
 
         query = query.limit(limit).offset(offset)
         articles = await session.execute(query)
-        return [self._to_article_dto(article) for article in articles]
+        return [self._to_article_feed_record_dto(article) for article in articles]
 
     async def count_by_followings(self, session: AsyncSession, user_id: int) -> int:
         query = select(count(Article.id)).join(
@@ -266,7 +291,7 @@ class ArticleRepository(IArticleRepository):
             ),
         )
         result = await session.execute(query)
-        return result.scalar()
+        return result.scalar() or 0
 
     async def count_by_filters(
         self,
@@ -312,26 +337,4 @@ class ArticleRepository(IArticleRepository):
             # fmt: on
 
         result = await session.execute(query)
-        return result.scalar()
-
-    @staticmethod
-    def _to_article_dto(res: Any) -> ArticleDTO:
-        return ArticleDTO(
-            id=res.id,
-            author_id=res.author_id,
-            slug=res.slug,
-            title=res.title,
-            description=res.description,
-            body=res.body,
-            tags=res.tags.split(", ") if res.tags else [],
-            author=ArticleAuthorDTO(
-                username=res.username,
-                bio=res.bio,
-                image=res.image_url,
-                following=res.following,
-            ),
-            created_at=res.created_at,
-            updated_at=res.updated_at,
-            favorited=res.favorited,
-            favorites_count=res.favorites_count,
-        )
+        return result.scalar() or 0

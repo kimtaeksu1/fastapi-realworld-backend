@@ -2,7 +2,7 @@ import abc
 from typing import Any
 
 from conduit.domain.dtos.article import (
-    ArticleDTO,
+    ArticleFeedRecordDTO,
     ArticleRecordDTO,
     CreateArticleDTO,
     UpdateArticleDTO,
@@ -36,7 +36,7 @@ class IArticleRepository(abc.ABC):
     @abc.abstractmethod
     async def list_by_followings(
         self, session: Any, user_id: int, limit: int, offset: int
-    ) -> list[ArticleDTO]: ...
+    ) -> list[ArticleFeedRecordDTO]: ...
 
     @abc.abstractmethod
     async def list_by_filters(
@@ -48,7 +48,7 @@ class IArticleRepository(abc.ABC):
         tag: str | None = None,
         author: str | None = None,
         favorited: str | None = None,
-    ) -> list[ArticleDTO]: ...
+    ) -> list[ArticleFeedRecordDTO]: ...
 
     @abc.abstractmethod
     async def count_by_followings(self, session: Any, user_id: int) -> int: ...

@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from conduit.domain.dtos.tag import TagDTO
+from conduit.domain.dtos.tag import TagDTO, TagRecordDTO
 from conduit.domain.repositories.tag import ITagRepository
 from conduit.domain.services.tag import ITagService
 
@@ -12,4 +12,9 @@ class TagService(ITagService):
         self._tag_repo = tag_repo
 
     async def get_all_tags(self, session: AsyncSession) -> list[TagDTO]:
-        return await self._tag_repo.list(session=session)
+        tags = await self._tag_repo.list(session=session)
+        return [self._to_tag_dto(tag) for tag in tags]
+
+    @staticmethod
+    def _to_tag_dto(record: TagRecordDTO) -> TagDTO:
+        return TagDTO(id=record.id, tag=record.tag, created_at=record.created_at)

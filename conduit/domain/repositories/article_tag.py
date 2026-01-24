@@ -1,7 +1,7 @@
 import abc
 from typing import Any
 
-from conduit.domain.dtos.tag import TagDTO
+from conduit.domain.dtos.tag import TagRecordDTO
 
 
 class IArticleTagRepository(abc.ABC):
@@ -10,7 +10,7 @@ class IArticleTagRepository(abc.ABC):
     @abc.abstractmethod
     async def add_many(
         self, session: Any, article_id: int, tags: list[str]
-    ) -> list[TagDTO]: ...
+    ) -> list[TagRecordDTO]: ...
 
     @abc.abstractmethod
-    async def list(self, session: Any, article_id: int) -> list[TagDTO]: ...
+    async def list(self, session: Any, article_id: int) -> list[TagRecordDTO]: ...
