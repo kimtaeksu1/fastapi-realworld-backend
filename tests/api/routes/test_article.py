@@ -159,3 +159,43 @@ async def test_user_can_delete_own_article(
 
     response = await authorized_test_client.get(url=f"/articles/{test_article.slug}")
     assert response.status_code == 404
+
+
+@pytest.mark.anyio
+async def test_user_can_not_favorite_article_twice(
+    authorized_test_client: AsyncClient, test_article: ArticleDTO
+) -> None:
+    response = await authorized_test_client.post(
+        url=f"/articles/{test_article.slug}/favorite"
+    )
+    assert response.status_code == 200
+
+    response = await authorized_test_client.post(
+        url=f"/articles/{test_article.slug}/favorite"
+    )
+    assert response.status_code == 400
+
+
+@pytest.mark.anyio
+async def test_user_can_not_unfavorite_article_without_favorite(
+    authorized_test_client: AsyncClient, test_article: ArticleDTO
+) -> None:
+    response = await authorized_test_client.delete(
+        url=f"/articles/{test_article.slug}/favorite"
+    )
+    assert response.status_code == 400
+
+
+@pytest.mark.anyio
+async def test_user_can_unfavorite_article_after_favorite(
+    authorized_test_client: AsyncClient, test_article: ArticleDTO
+) -> None:
+    response = await authorized_test_client.post(
+        url=f"/articles/{test_article.slug}/favorite"
+    )
+    assert response.status_code == 200
+
+    response = await authorized_test_client.delete(
+        url=f"/articles/{test_article.slug}/favorite"
+    )
+    assert response.status_code == 200
