@@ -21,6 +21,8 @@ It is built with FastAPI, a modern, fast (high-performance), web framework for b
 - `conduit/services`: application services/use-cases
 - `conduit/interfaces`: interfaces/abstractions (repositories, service contracts)
 - `conduit/dtos`: DTOs used across layers
+  - `conduit/dtos/domain`: business-level DTOs used by services and API schemas
+  - `conduit/dtos/records`: persistence DTOs returned by repositories
 - `conduit/infrastructure`: SQLAlchemy models, repositories, migrations
 - `conduit/core`: config, logging, security, shared utilities
 
