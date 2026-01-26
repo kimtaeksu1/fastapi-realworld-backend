@@ -16,6 +16,14 @@ For more information on how this works with other frontends/backends, head over 
 This project is a Python-based API that uses PostgreSQL as its database.
 It is built with FastAPI, a modern, fast (high-performance), web framework for building APIs with Python 3 based on standard Python type hints.
 
+## Package layout
+- `conduit/api`: HTTP layer (routes, schemas, middlewares)
+- `conduit/services`: application services/use-cases
+- `conduit/interfaces`: interfaces/abstractions (repositories, service contracts)
+- `conduit/dtos`: DTOs used across layers
+- `conduit/infrastructure`: SQLAlchemy models, repositories, migrations
+- `conduit/core`: config, logging, security, shared utilities
+
 ## Prerequisites
 - Python 3.12
 - FastAPI
