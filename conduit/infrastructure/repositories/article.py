@@ -29,40 +29,6 @@ FavoriteAlias = aliased(Favorite)
 
 
 class ArticleRepository(IArticleRepository):
-    @staticmethod
-    def _to_article_record_dto(model: Article) -> ArticleRecordDTO:
-        return ArticleRecordDTO(
-            id=model.id,
-            author_id=model.author_id,
-            slug=model.slug,
-            title=model.title,
-            description=model.description,
-            body=model.body,
-            created_at=model.created_at,
-            updated_at=model.updated_at,
-        )
-
-    @staticmethod
-    def _to_article_feed_record_dto(res: Any) -> ArticleFeedRecordDTO:
-        tags = res.tags.split(", ") if res.tags else []
-        return ArticleFeedRecordDTO(
-            id=res.id,
-            author_id=res.author_id,
-            slug=res.slug,
-            title=res.title,
-            description=res.description,
-            body=res.body,
-            tags=tags,
-            author_username=res.username,
-            author_bio=res.bio,
-            author_image=res.image,
-            author_following=res.following,
-            created_at=res.created_at,
-            updated_at=res.updated_at,
-            favorited=res.favorited,
-            favorites_count=res.favorites_count,
-        )
-
     async def add(
         self, session: AsyncSession, author_id: int, create_item: CreateArticleDTO
     ) -> ArticleRecordDTO:
@@ -329,3 +295,37 @@ class ArticleRepository(IArticleRepository):
 
         result = await session.execute(query)
         return int(result.scalar_one())
+
+    @staticmethod
+    def _to_article_record_dto(model: Article) -> ArticleRecordDTO:
+        return ArticleRecordDTO(
+            id=model.id,
+            author_id=model.author_id,
+            slug=model.slug,
+            title=model.title,
+            description=model.description,
+            body=model.body,
+            created_at=model.created_at,
+            updated_at=model.updated_at,
+        )
+
+    @staticmethod
+    def _to_article_feed_record_dto(res: Any) -> ArticleFeedRecordDTO:
+        tags = res.tags.split(", ") if res.tags else []
+        return ArticleFeedRecordDTO(
+            id=res.id,
+            author_id=res.author_id,
+            slug=res.slug,
+            title=res.title,
+            description=res.description,
+            body=res.body,
+            tags=tags,
+            author_username=res.username,
+            author_bio=res.bio,
+            author_image=res.image,
+            author_following=res.following,
+            created_at=res.created_at,
+            updated_at=res.updated_at,
+            favorited=res.favorited,
+            favorites_count=res.favorites_count,
+        )

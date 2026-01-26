@@ -12,17 +12,6 @@ from conduit.interfaces.repositories.comment import ICommentRepository
 
 
 class CommentRepository(ICommentRepository):
-    @staticmethod
-    def _to_comment_record_dto(model: Comment) -> CommentRecordDTO:
-        return CommentRecordDTO(
-            id=model.id,
-            body=model.body,
-            author_id=model.author_id,
-            article_id=model.article_id,
-            created_at=model.created_at,
-            updated_at=model.updated_at,
-        )
-
     async def add(
         self,
         session: AsyncSession,
@@ -72,3 +61,14 @@ class CommentRepository(ICommentRepository):
         query = select(count(Comment.id)).where(Comment.article_id == article_id)
         result = await session.execute(query)
         return result.scalar_one()
+
+    @staticmethod
+    def _to_comment_record_dto(model: Comment) -> CommentRecordDTO:
+        return CommentRecordDTO(
+            id=model.id,
+            body=model.body,
+            author_id=model.author_id,
+            article_id=model.article_id,
+            created_at=model.created_at,
+            updated_at=model.updated_at,
+        )

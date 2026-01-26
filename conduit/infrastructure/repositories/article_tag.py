@@ -12,10 +12,6 @@ from conduit.interfaces.repositories.article_tag import IArticleTagRepository
 class ArticleTagRepository(IArticleTagRepository):
     """Repository for Article Tag model."""
 
-    @staticmethod
-    def _to_tag_record_dto(model: Tag) -> TagRecordDTO:
-        return TagRecordDTO(id=model.id, tag=model.tag, created_at=model.created_at)
-
     async def add_many(
         self, session: AsyncSession, article_id: int, tags: list[str]
     ) -> list[TagRecordDTO]:
@@ -58,3 +54,7 @@ class ArticleTagRepository(IArticleTagRepository):
         )
         tags = await session.scalars(query)
         return [self._to_tag_record_dto(tag) for tag in tags]
+
+    @staticmethod
+    def _to_tag_record_dto(model: Tag) -> TagRecordDTO:
+        return TagRecordDTO(id=model.id, tag=model.tag, created_at=model.created_at)
