@@ -31,13 +31,7 @@ class CommentService(ICommentService):
         current_user: UserDTO,
     ) -> CommentDTO:
         article = await self._article_repo.get_by_slug(session=session, slug=slug)
-        profile = ProfileDTO(
-            user_id=current_user.id,
-            username=current_user.username,
-            bio=current_user.bio,
-            image=current_user.image,
-            following=False,
-        )
+        profile = ProfileDTO.from_user(user=current_user, following=False)
         try:
             comment_record_dto = await self._comment_repo.add(
                 session=session,
@@ -47,13 +41,7 @@ class CommentService(ICommentService):
             )
         except (NoResultFound, MultipleResultsFound) as exc:
             raise CommentCreateException() from exc
-        return CommentDTO(
-            id=comment_record_dto.id,
-            body=comment_record_dto.body,
-            author=profile,
-            created_at=comment_record_dto.created_at,
-            updated_at=comment_record_dto.updated_at,
-        )
+        return CommentDTO.from_record(record=comment_record_dto, author=profile)
 
     async def get_article_comments(
         self, session: AsyncSession, slug: str, current_user: UserDTO | None = None
@@ -66,12 +54,8 @@ class CommentService(ICommentService):
             session=session, comments=comment_records, current_user=current_user
         )
         comments = [
-            CommentDTO(
-                id=comment_record_dto.id,
-                body=comment_record_dto.body,
-                author=profiles_map[comment_record_dto.author_id],
-                created_at=comment_record_dto.created_at,
-                updated_at=comment_record_dto.updated_at,
+            CommentDTO.from_record(
+                comment_record_dto, profiles_map[comment_record_dto.author_id]
             )
             for comment_record_dto in comment_records
         ]

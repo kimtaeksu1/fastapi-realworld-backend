@@ -43,14 +43,7 @@ class ProfileService(IProfileService):
             if current_user
             else False
         )
-        profile = ProfileDTO(
-            user_id=target_user.id,
-            username=target_user.username,
-            bio=target_user.bio,
-            image=target_user.image,
-            following=following,
-        )
-        return profile
+        return ProfileDTO.from_user(user=target_user, following=following)
 
     async def get_profile_by_user_id(
         self, session: AsyncSession, user_id: int, current_user: UserDTO | None = None
@@ -67,14 +60,7 @@ class ProfileService(IProfileService):
             if current_user
             else False
         )
-        profile = ProfileDTO(
-            user_id=target_user.id,
-            username=target_user.username,
-            bio=target_user.bio,
-            image=target_user.image,
-            following=following,
-        )
-        return profile
+        return ProfileDTO.from_user(user=target_user, following=following)
 
     async def get_profiles_by_user_ids(
         self, session: AsyncSession, user_ids: list[int], current_user: UserDTO | None
@@ -92,12 +78,8 @@ class ProfileService(IProfileService):
             else []
         )
         return [
-            ProfileDTO(
-                user_id=user_dto.id,
-                username=user_dto.username,
-                bio=user_dto.bio,
-                image=user_dto.image,
-                following=user_dto.id in following_user_ids,
+            ProfileDTO.from_user(
+                user=user_dto, following=user_dto.id in following_user_ids
             )
             for user_dto in target_users
         ]

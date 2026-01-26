@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -57,14 +55,15 @@ class ArticleService(IArticleService):
             await self._article_tag_repo.add_many(
                 session=session, article_id=article.id, tags=article_to_create.tags
             )
-        return ArticleDTO(
-            **asdict(article),
-            author=ArticleAuthorDTO(
-                username=profile.username,
-                bio=profile.bio,
-                image=profile.image,
-                following=profile.following,
-            ),
+        author = ArticleAuthorDTO(
+            username=profile.username,
+            bio=profile.bio,
+            image=profile.image,
+            following=profile.following,
+        )
+        return ArticleDTO.from_record(
+            record=article,
+            author=author,
             tags=article_to_create.tags,
             favorited=False,
             favorites_count=0,
@@ -152,7 +151,8 @@ class ArticleService(IArticleService):
             session=session, user_id=current_user.id, limit=limit, offset=offset
         )
         articles_with_extra = [
-            self._to_article_dto_from_feed_record(article) for article in articles
+            self._to_article_dto_from_feed_record(record=article)
+            for article in articles
         ]
         articles_count = await self._article_repo.count_by_followings(
             session=session, user_id=current_user.id
@@ -222,14 +222,15 @@ class ArticleService(IArticleService):
             if user_id
             else False
         )
-        return ArticleDTO(
-            **asdict(article),
-            author=ArticleAuthorDTO(
-                username=profile.username,
-                bio=profile.bio,
-                image=profile.image,
-                following=profile.following,
-            ),
+        author = ArticleAuthorDTO(
+            username=profile.username,
+            bio=profile.bio,
+            image=profile.image,
+            following=profile.following,
+        )
+        return ArticleDTO.from_record(
+            record=article,
+            author=author,
             tags=article_tags,
             favorited=is_favorited_by_user,
             favorites_count=favorites_count,
@@ -250,22 +251,4 @@ class ArticleService(IArticleService):
 
     @staticmethod
     def _to_article_dto_from_feed_record(record: ArticleFeedRecordDTO) -> ArticleDTO:
-        return ArticleDTO(
-            id=record.id,
-            author_id=record.author_id,
-            slug=record.slug,
-            title=record.title,
-            description=record.description,
-            body=record.body,
-            tags=record.tags,
-            author=ArticleAuthorDTO(
-                username=record.author_username,
-                bio=record.author_bio or "",
-                image=record.author_image,
-                following=record.author_following,
-            ),
-            created_at=record.created_at,
-            updated_at=record.updated_at,
-            favorited=record.favorited,
-            favorites_count=record.favorites_count,
-        )
+        return ArticleDTO.from_feed_record(record=record)
