@@ -1,12 +1,11 @@
 import abc
 from typing import Any
 
-from conduit.dtos.comment import CommentDTO, CommentsListDTO, CreateCommentDTO
-from conduit.dtos.user import UserDTO
+from conduit.dtos.domain.comment import CommentDTO, CommentsListDTO, CreateCommentDTO
+from conduit.dtos.domain.user import UserDTO
 
 
 class ICommentService(abc.ABC):
-
     @abc.abstractmethod
     async def create_article_comment(
         self,

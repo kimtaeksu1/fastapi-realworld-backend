@@ -9,17 +9,16 @@ from conduit.core.exceptions import (
     ArticleNotFavoritedException,
     ArticlePermissionException,
 )
-from conduit.dtos.article import (
+from conduit.dtos.domain.article import (
     ArticleAuthorDTO,
     ArticleDTO,
-    ArticleFeedRecordDTO,
-    ArticleRecordDTO,
     ArticlesFeedDTO,
     CreateArticleDTO,
     UpdateArticleDTO,
 )
-from conduit.dtos.profile import ProfileDTO
-from conduit.dtos.user import UserDTO
+from conduit.dtos.domain.profile import ProfileDTO
+from conduit.dtos.domain.user import UserDTO
+from conduit.dtos.records.article import ArticleFeedRecordDTO, ArticleRecordDTO
 from conduit.interfaces.repositories.article import IArticleRepository
 from conduit.interfaces.repositories.article_tag import IArticleTagRepository
 from conduit.interfaces.repositories.favorite import IFavoriteRepository

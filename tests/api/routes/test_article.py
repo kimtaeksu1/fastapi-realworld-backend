@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from conduit.api.schemas.responses.article import ArticleResponse
-from conduit.dtos.article import ArticleDTO
+from conduit.dtos.domain.article import ArticleDTO
 from conduit.infrastructure.repositories.article import ArticleRepository
 from conduit.interfaces.services.user import IUserService
 from tests.utils import create_another_test_article, create_another_test_user

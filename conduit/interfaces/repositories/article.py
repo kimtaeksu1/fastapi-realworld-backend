@@ -1,12 +1,8 @@
 import abc
 from typing import Any
 
-from conduit.dtos.article import (
-    ArticleFeedRecordDTO,
-    ArticleRecordDTO,
-    CreateArticleDTO,
-    UpdateArticleDTO,
-)
+from conduit.dtos.domain.article import CreateArticleDTO, UpdateArticleDTO
+from conduit.dtos.records.article import ArticleFeedRecordDTO, ArticleRecordDTO
 
 
 class IArticleRepository(abc.ABC):

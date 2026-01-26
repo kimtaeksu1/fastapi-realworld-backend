@@ -2,11 +2,15 @@ import abc
 from collections.abc import Collection
 from typing import Any
 
-from conduit.dtos.user import CreateUserDTO, UpdatedUserDTO, UpdateUserDTO, UserDTO
+from conduit.dtos.domain.user import (
+    CreateUserDTO,
+    UpdatedUserDTO,
+    UpdateUserDTO,
+    UserDTO,
+)
 
 
 class IUserService(abc.ABC):
-
     @abc.abstractmethod
     async def create_user(
         self, session: Any, user_to_create: CreateUserDTO

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from conduit.dtos.comment import CreateCommentDTO
+from conduit.dtos.domain.comment import CreateCommentDTO
 
 
 class CreateCommentData(BaseModel):

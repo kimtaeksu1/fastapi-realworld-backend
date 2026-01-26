@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from conduit.dtos.user import UpdatedUserDTO, UserDTO
+from conduit.dtos.domain.user import UpdatedUserDTO, UserDTO
 
 
 class UserIDData(BaseModel):

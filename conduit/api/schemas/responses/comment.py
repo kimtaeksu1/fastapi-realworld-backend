@@ -3,7 +3,7 @@ import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
 from conduit.core.utils.date import convert_datetime_to_realworld
-from conduit.dtos.comment import CommentDTO, CommentsListDTO
+from conduit.dtos.domain.comment import CommentDTO, CommentsListDTO
 
 
 class CommentAuthorData(BaseModel):

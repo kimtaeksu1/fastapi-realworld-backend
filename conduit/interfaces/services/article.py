@@ -1,17 +1,16 @@
 import abc
 from typing import Any
 
-from conduit.dtos.article import (
+from conduit.dtos.domain.article import (
     ArticleDTO,
     ArticlesFeedDTO,
     CreateArticleDTO,
     UpdateArticleDTO,
 )
-from conduit.dtos.user import UserDTO
+from conduit.dtos.domain.user import UserDTO
 
 
 class IArticleService(abc.ABC):
-
     @abc.abstractmethod
     async def create_new_article(
         self, session: Any, author_id: int, article_to_create: CreateArticleDTO

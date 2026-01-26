@@ -2,7 +2,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from conduit.dtos.user import UserDTO
+from conduit.dtos.domain.user import UserDTO
 from conduit.infrastructure.repositories.user import UserRepository
 from conduit.services.password import verify_password
 

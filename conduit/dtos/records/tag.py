@@ -7,10 +7,3 @@ class TagRecordDTO:
     id: int
     tag: str
     created_at: datetime.datetime
-
-
-@dataclass(frozen=True)
-class TagDTO:
-    id: int
-    tag: str
-    created_at: datetime.datetime

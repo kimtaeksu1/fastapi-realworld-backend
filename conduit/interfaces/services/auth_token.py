@@ -1,11 +1,10 @@
 import abc
 
-from conduit.dtos.auth_token import TokenPayloadDTO
-from conduit.dtos.user import UserDTO
+from conduit.dtos.domain.auth_token import TokenPayloadDTO
+from conduit.dtos.domain.user import UserDTO
 
 
 class IAuthTokenService(abc.ABC):
-
     @abc.abstractmethod
     def generate_jwt_token(self, user: UserDTO) -> str: ...
 

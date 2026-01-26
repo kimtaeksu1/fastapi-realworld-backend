@@ -2,7 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
-from conduit.dtos.user import CreateUserDTO, LoginUserDTO, UpdateUserDTO
+from conduit.dtos.domain.user import CreateUserDTO, LoginUserDTO, UpdateUserDTO
 
 
 class UserRegistrationData(BaseModel):

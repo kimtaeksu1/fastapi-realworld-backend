@@ -1,7 +1,7 @@
 import abc
 from typing import Any
 
-from conduit.dtos.tag import TagRecordDTO
+from conduit.dtos.records.tag import TagRecordDTO
 
 
 class IArticleTagRepository(abc.ABC):

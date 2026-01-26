@@ -1,8 +1,8 @@
 import abc
 from typing import Any
 
-from conduit.dtos.auth import AuthResult
-from conduit.dtos.user import CreateUserDTO, LoginUserDTO
+from conduit.dtos.domain.auth import AuthResult
+from conduit.dtos.domain.user import CreateUserDTO, LoginUserDTO
 
 
 class IUserAuthService(abc.ABC):

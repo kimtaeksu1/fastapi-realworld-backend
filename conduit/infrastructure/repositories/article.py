@@ -12,12 +12,8 @@ from conduit.core.utils.slug import (
     make_slug_from_title,
     make_slug_from_title_and_code,
 )
-from conduit.dtos.article import (
-    ArticleFeedRecordDTO,
-    ArticleRecordDTO,
-    CreateArticleDTO,
-    UpdateArticleDTO,
-)
+from conduit.dtos.domain.article import CreateArticleDTO, UpdateArticleDTO
+from conduit.dtos.records.article import ArticleFeedRecordDTO, ArticleRecordDTO
 from conduit.infrastructure.models import (
     Article,
     ArticleTag,

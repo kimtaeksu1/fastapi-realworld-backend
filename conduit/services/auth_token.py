@@ -4,8 +4,8 @@ import jwt
 from structlog import get_logger
 
 from conduit.core.exceptions import IncorrectJWTTokenException
-from conduit.dtos.auth_token import TokenPayloadDTO
-from conduit.dtos.user import UserDTO
+from conduit.dtos.domain.auth_token import TokenPayloadDTO
+from conduit.dtos.domain.user import UserDTO
 from conduit.interfaces.services.auth_token import IAuthTokenService
 
 logger = get_logger()

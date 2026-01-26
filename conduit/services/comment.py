@@ -2,14 +2,10 @@ from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from conduit.core.exceptions import CommentCreateException, CommentPermissionException
-from conduit.dtos.comment import (
-    CommentDTO,
-    CommentRecordDTO,
-    CommentsListDTO,
-    CreateCommentDTO,
-)
-from conduit.dtos.profile import ProfileDTO
-from conduit.dtos.user import UserDTO
+from conduit.dtos.domain.comment import CommentDTO, CommentsListDTO, CreateCommentDTO
+from conduit.dtos.domain.profile import ProfileDTO
+from conduit.dtos.domain.user import UserDTO
+from conduit.dtos.records.comment import CommentRecordDTO
 from conduit.interfaces.repositories.article import IArticleRepository
 from conduit.interfaces.repositories.comment import ICommentRepository
 from conduit.interfaces.services.comment import ICommentService

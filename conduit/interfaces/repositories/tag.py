@@ -2,7 +2,7 @@ import abc
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from conduit.dtos.tag import TagRecordDTO
+from conduit.dtos.records.tag import TagRecordDTO
 
 
 class ITagRepository(abc.ABC):

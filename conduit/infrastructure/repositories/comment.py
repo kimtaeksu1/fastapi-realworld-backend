@@ -5,7 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.functions import count
 
 from conduit.core.exceptions import CommentNotFoundException
-from conduit.dtos.comment import CommentRecordDTO, CreateCommentDTO
+from conduit.dtos.domain.comment import CreateCommentDTO
+from conduit.dtos.records.comment import CommentRecordDTO
 from conduit.infrastructure.models import Comment
 from conduit.interfaces.repositories.comment import ICommentRepository
 

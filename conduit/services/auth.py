@@ -2,8 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from structlog import get_logger
 
 from conduit.core.exceptions import IncorrectLoginInputException, UserNotFoundException
-from conduit.dtos.auth import AuthResult
-from conduit.dtos.user import CreateUserDTO, LoginUserDTO
+from conduit.dtos.domain.auth import AuthResult
+from conduit.dtos.domain.user import CreateUserDTO, LoginUserDTO
 from conduit.interfaces.services.auth import IUserAuthService
 from conduit.interfaces.services.auth_token import IAuthTokenService
 from conduit.interfaces.services.user import IUserService

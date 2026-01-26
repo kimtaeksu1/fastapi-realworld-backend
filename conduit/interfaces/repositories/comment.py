@@ -1,7 +1,8 @@
 import abc
 from typing import Any
 
-from conduit.dtos.comment import CommentRecordDTO, CreateCommentDTO
+from conduit.dtos.domain.comment import CreateCommentDTO
+from conduit.dtos.records.comment import CommentRecordDTO
 
 
 class ICommentRepository(abc.ABC):

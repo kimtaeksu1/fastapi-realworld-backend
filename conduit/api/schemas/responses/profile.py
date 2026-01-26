@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from conduit.dtos.profile import ProfileDTO
+from conduit.dtos.domain.profile import ProfileDTO
 
 
 class ProfileData(BaseModel):

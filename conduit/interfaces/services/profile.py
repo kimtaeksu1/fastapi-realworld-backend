@@ -1,12 +1,11 @@
 import abc
 from typing import Any
 
-from conduit.dtos.profile import ProfileDTO
-from conduit.dtos.user import UserDTO
+from conduit.dtos.domain.profile import ProfileDTO
+from conduit.dtos.domain.user import UserDTO
 
 
 class IProfileService(abc.ABC):
-
     @abc.abstractmethod
     async def get_profile_by_username(
         self, session: Any, username: str, current_user: UserDTO | None = None

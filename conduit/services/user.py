@@ -8,14 +8,13 @@ from conduit.core.exceptions import (
     UserCreateException,
     UserNameAlreadyTakenException,
 )
-from conduit.dtos.user import (
+from conduit.dtos.domain.user import (
     CreateUserDTO,
-    CreateUserRecordDTO,
     UpdatedUserDTO,
     UpdateUserDTO,
-    UpdateUserRecordDTO,
     UserDTO,
 )
+from conduit.dtos.records.user import CreateUserRecordDTO, UpdateUserRecordDTO
 from conduit.interfaces.repositories.user import IUserRepository
 from conduit.interfaces.services.user import IUserService
 from conduit.services.password import get_password_hash

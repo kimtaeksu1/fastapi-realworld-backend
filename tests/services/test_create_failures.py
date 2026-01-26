@@ -8,9 +8,10 @@ from conduit.core.exceptions import (
     CommentCreateException,
     UserCreateException,
 )
-from conduit.dtos.article import ArticleRecordDTO, CreateArticleDTO
-from conduit.dtos.comment import CreateCommentDTO
-from conduit.dtos.user import CreateUserDTO, UserDTO
+from conduit.dtos.domain.article import CreateArticleDTO
+from conduit.dtos.domain.comment import CreateCommentDTO
+from conduit.dtos.domain.user import CreateUserDTO, UserDTO
+from conduit.dtos.records.article import ArticleRecordDTO
 from conduit.services.article import ArticleService
 from conduit.services.comment import CommentService
 from conduit.services.user import UserService
