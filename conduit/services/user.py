@@ -95,7 +95,7 @@ class UserService(IUserService):
                 else None
             ),
             bio=user_to_update.bio,
-            image_url=user_to_update.image_url,
+            image=user_to_update.image,
         )
         updated_user = await self._user_repo.update(
             session=session, user_id=current_user.id, update_item=update_record
@@ -105,5 +105,5 @@ class UserService(IUserService):
             email=updated_user.email,
             username=updated_user.username,
             bio=updated_user.bio,
-            image=updated_user.image_url,
+            image=updated_user.image,
         )

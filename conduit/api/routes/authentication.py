@@ -19,10 +19,10 @@ async def register_user(
     """
     Process user registration.
     """
-    user_dto = await user_auth_service.sign_up_user(
+    user_dto, token = await user_auth_service.sign_up_user(
         session=session, user_to_create=payload.to_dto()
     )
-    return UserRegistrationResponse.from_dto(dto=user_dto)
+    return UserRegistrationResponse.from_user(dto=user_dto, token=token)
 
 
 @router.post("/login", response_model=UserLoginResponse)
@@ -32,7 +32,7 @@ async def login_user(
     """
     Process user login.
     """
-    user_dto = await user_auth_service.sign_in_user(
+    user_dto, token = await user_auth_service.sign_in_user(
         session=session, user_to_login=payload.to_dto()
     )
-    return UserLoginResponse.from_dto(dto=user_dto)
+    return UserLoginResponse.from_user(dto=user_dto, token=token)

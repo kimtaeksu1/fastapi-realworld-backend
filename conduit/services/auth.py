@@ -2,12 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from structlog import get_logger
 
 from conduit.core.exceptions import IncorrectLoginInputException, UserNotFoundException
-from conduit.dtos.user import (
-    CreatedUserDTO,
-    CreateUserDTO,
-    LoggedInUserDTO,
-    LoginUserDTO,
-)
+from conduit.dtos.user import CreateUserDTO, LoginUserDTO, UserDTO
 from conduit.interfaces.services.auth import IUserAuthService
 from conduit.interfaces.services.auth_token import IAuthTokenService
 from conduit.interfaces.services.user import IUserService
@@ -27,23 +22,16 @@ class UserAuthService(IUserAuthService):
 
     async def sign_up_user(
         self, session: AsyncSession, user_to_create: CreateUserDTO
-    ) -> CreatedUserDTO:
+    ) -> tuple[UserDTO, str]:
         user = await self._user_service.create_user(
             session=session, user_to_create=user_to_create
         )
         jwt_token = self._auth_token_service.generate_jwt_token(user=user)
-        return CreatedUserDTO(
-            id=user.id,
-            email=user.email,
-            username=user.username,
-            bio=user.bio,
-            image=user.image_url,
-            token=jwt_token,
-        )
+        return user, jwt_token
 
     async def sign_in_user(
         self, session: AsyncSession, user_to_login: LoginUserDTO
-    ) -> LoggedInUserDTO:
+    ) -> tuple[UserDTO, str]:
         try:
             user = await self._user_service.get_user_by_email(
                 session=session, email=user_to_login.email
@@ -59,10 +47,4 @@ class UserAuthService(IUserAuthService):
             raise IncorrectLoginInputException()
 
         jwt_token = self._auth_token_service.generate_jwt_token(user=user)
-        return LoggedInUserDTO(
-            email=user.email,
-            username=user.username,
-            bio=user.bio,
-            image=user.image_url,
-            token=jwt_token,
-        )
+        return user, jwt_token

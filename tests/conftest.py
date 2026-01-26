@@ -128,7 +128,7 @@ def not_exists_user() -> UserDTO:
         email="email",
         password_hash="hash",
         bio="bio",
-        image_url="link",
+        image="link",
         created_at=datetime.now(),
     )
     dto.id = 9999

@@ -59,7 +59,7 @@ class ArticleRepository(IArticleRepository):
             tags=tags,
             author_username=res.username,
             author_bio=res.bio,
-            author_image_url=res.image_url,
+            author_image=res.image,
             author_following=res.following,
             created_at=res.created_at,
             updated_at=res.updated_at,
@@ -148,7 +148,7 @@ class ArticleRepository(IArticleRepository):
                 Article.updated_at.label("updated_at"),
                 User.username.label("username"),
                 User.bio.label("bio"),
-                User.image_url.label("image_url"),
+                User.image.label("image"),
                 true().label("following"),
                 # Subquery for favorites count.
                 select(func.count(Favorite.article_id))
@@ -187,7 +187,7 @@ class ArticleRepository(IArticleRepository):
                 User.username,
                 User.bio,
                 User.email,
-                User.image_url,
+                User.image,
             )
         )
         query = query.limit(limit).offset(offset)
@@ -218,7 +218,7 @@ class ArticleRepository(IArticleRepository):
                 Article.updated_at.label("updated_at"),
                 User.username.label("username"),
                 User.bio.label("bio"),
-                User.image_url.label("image_url"),
+                User.image.label("image"),
                 exists()
                 .where(
                     (Follower.follower_id == user_id)
@@ -256,7 +256,7 @@ class ArticleRepository(IArticleRepository):
                 User.username,
                 User.bio,
                 User.email,
-                User.image_url,
+                User.image,
             )
             # fmt: on
         )

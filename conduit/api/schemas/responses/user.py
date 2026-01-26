@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from conduit.dtos.user import CreatedUserDTO, LoggedInUserDTO, UpdatedUserDTO, UserDTO
+from conduit.dtos.user import UpdatedUserDTO, UserDTO
 
 
 class UserIDData(BaseModel):
@@ -35,7 +35,7 @@ class UserRegistrationResponse(BaseModel):
     user: RegisteredUserData
 
     @classmethod
-    def from_dto(cls, dto: CreatedUserDTO) -> "UserRegistrationResponse":
+    def from_user(cls, dto: UserDTO, token: str) -> "UserRegistrationResponse":
         return UserRegistrationResponse(
             user=RegisteredUserData(
                 id=dto.id,
@@ -43,7 +43,7 @@ class UserRegistrationResponse(BaseModel):
                 username=dto.username,
                 bio=dto.bio,
                 image=dto.image,
-                token=dto.token,
+                token=token,
             )
         )
 
@@ -52,14 +52,14 @@ class UserLoginResponse(BaseModel):
     user: LoggedInUserData
 
     @classmethod
-    def from_dto(cls, dto: LoggedInUserDTO) -> "UserLoginResponse":
+    def from_user(cls, dto: UserDTO, token: str) -> "UserLoginResponse":
         return UserLoginResponse(
             user=LoggedInUserData(
                 email=dto.email,
                 username=dto.username,
                 bio=dto.bio,
                 image=dto.image,
-                token=dto.token,
+                token=token,
             )
         )
 
@@ -75,7 +75,7 @@ class CurrentUserResponse(BaseModel):
                 email=dto.email,
                 username=dto.username,
                 bio=dto.bio,
-                image=dto.image_url,
+                image=dto.image,
                 token=token,
             )
         )

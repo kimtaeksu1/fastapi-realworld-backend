@@ -56,5 +56,5 @@ class UserUpdateRequest(BaseModel):
             password=self.user.password,
             username=self.user.username,
             bio=self.user.bio,
-            image_url=self.user.image,
+            image=self.user.image,
         )

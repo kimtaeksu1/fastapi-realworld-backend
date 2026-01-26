@@ -262,7 +262,7 @@ class ArticleService(IArticleService):
             author=ArticleAuthorDTO(
                 username=record.author_username,
                 bio=record.author_bio or "",
-                image=record.author_image_url,
+                image=record.author_image,
                 following=record.author_following,
             ),
             created_at=record.created_at,

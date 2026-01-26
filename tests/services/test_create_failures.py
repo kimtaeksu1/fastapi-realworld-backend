@@ -103,7 +103,7 @@ async def test_comment_create_raises_create_exception() -> None:
         email="user@example.com",
         password_hash="hash",
         bio="",
-        image_url="",
+        image="",
         created_at=datetime.datetime.now(),
     )
     current_user.id = 1

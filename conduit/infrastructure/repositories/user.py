@@ -22,7 +22,7 @@ class UserRepository(IUserRepository):
                 username=create_item.username,
                 email=create_item.email,
                 password_hash=create_item.password_hash,
-                image_url="https://api.realworld.io/images/smiley-cyrus.jpeg",
+                image="https://api.realworld.io/images/smiley-cyrus.jpeg",
                 bio="",
                 created_at=datetime.now(),
             )
@@ -95,8 +95,8 @@ class UserRepository(IUserRepository):
             query = query.values(password_hash=update_item.password_hash)
         if update_item.bio is not None:
             query = query.values(bio=update_item.bio)
-        if update_item.image_url is not None:
-            query = query.values(image_url=update_item.image_url)
+        if update_item.image is not None:
+            query = query.values(image=update_item.image)
 
         result = await session.execute(query)
         return self._to_user_dto(result.scalar_one())
@@ -108,7 +108,7 @@ class UserRepository(IUserRepository):
             email=model.email,
             password_hash=model.password_hash,
             bio=model.bio,
-            image_url=model.image_url,
+            image=model.image,
             created_at=model.created_at,
         )
         dto.id = model.id

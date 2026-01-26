@@ -25,7 +25,7 @@ class ArticleFeedRecordDTO:
     tags: list[str]
     author_username: str
     author_bio: str | None
-    author_image_url: str | None
+    author_image: str | None
     author_following: bool
     created_at: datetime.datetime
     updated_at: datetime.datetime

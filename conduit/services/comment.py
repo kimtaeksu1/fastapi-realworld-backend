@@ -39,7 +39,7 @@ class CommentService(ICommentService):
             user_id=current_user.id,
             username=current_user.username,
             bio=current_user.bio,
-            image=current_user.image_url,
+            image=current_user.image,
             following=False,
         )
         try:

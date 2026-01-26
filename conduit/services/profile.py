@@ -34,19 +34,22 @@ class ProfileService(IProfileService):
         except UserNotFoundException:
             logger.exception("Profile not found", username=username)
             raise ProfileNotFoundException()
-
-        profile = ProfileDTO(
-            user_id=target_user.id,
-            username=target_user.username,
-            bio=target_user.bio,
-            image=target_user.image_url,
-        )
-        if current_user:
-            profile.following = await self._follower_repo.exists(
+        following = (
+            await self._follower_repo.exists(
                 session=session,
                 follower_id=current_user.id,
                 following_id=target_user.id,
             )
+            if current_user
+            else False
+        )
+        profile = ProfileDTO(
+            user_id=target_user.id,
+            username=target_user.username,
+            bio=target_user.bio,
+            image=target_user.image,
+            following=following,
+        )
         return profile
 
     async def get_profile_by_user_id(
@@ -55,18 +58,22 @@ class ProfileService(IProfileService):
         target_user = await self._user_service.get_user_by_id(
             session=session, user_id=user_id
         )
-        profile = ProfileDTO(
-            user_id=target_user.id,
-            username=target_user.username,
-            bio=target_user.bio,
-            image=target_user.image_url,
-        )
-        if current_user:
-            profile.following = await self._follower_repo.exists(
+        following = (
+            await self._follower_repo.exists(
                 session=session,
                 follower_id=current_user.id,
                 following_id=target_user.id,
             )
+            if current_user
+            else False
+        )
+        profile = ProfileDTO(
+            user_id=target_user.id,
+            username=target_user.username,
+            bio=target_user.bio,
+            image=target_user.image,
+            following=following,
+        )
         return profile
 
     async def get_profiles_by_user_ids(
@@ -89,7 +96,7 @@ class ProfileService(IProfileService):
                 user_id=user_dto.id,
                 username=user_dto.username,
                 bio=user_dto.bio,
-                image=user_dto.image_url,
+                image=user_dto.image,
                 following=user_dto.id in following_user_ids,
             )
             for user_dto in target_users
