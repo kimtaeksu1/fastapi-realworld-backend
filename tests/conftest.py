@@ -123,7 +123,8 @@ def article_to_create() -> CreateArticleDTO:
 
 @pytest.fixture
 def not_exists_user() -> UserDTO:
-    dto = UserDTO(
+    return UserDTO(
+        id=9999,
         username="username",
         email="email",
         password_hash="hash",
@@ -131,8 +132,6 @@ def not_exists_user() -> UserDTO:
         image="link",
         created_at=datetime.now(),
     )
-    dto.id = 9999
-    return dto
 
 
 @pytest.fixture

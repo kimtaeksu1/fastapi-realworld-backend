@@ -99,6 +99,7 @@ async def test_user_create_raises_create_exception() -> None:
 @pytest.mark.anyio
 async def test_comment_create_raises_create_exception() -> None:
     current_user = UserDTO(
+        id=1,
         username="user",
         email="user@example.com",
         password_hash="hash",
@@ -106,7 +107,6 @@ async def test_comment_create_raises_create_exception() -> None:
         image="",
         created_at=datetime.datetime.now(),
     )
-    current_user.id = 1
     service = CommentService(
         article_repo=_ArticleRepo(),
         comment_repo=_FailingCommentRepo(),

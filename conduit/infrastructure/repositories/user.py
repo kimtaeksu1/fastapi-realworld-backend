@@ -103,7 +103,8 @@ class UserRepository(IUserRepository):
 
     @staticmethod
     def _to_user_dto(model: User) -> UserDTO:
-        dto = UserDTO(
+        return UserDTO(
+            id=model.id,
             username=model.username,
             email=model.email,
             password_hash=model.password_hash,
@@ -111,5 +112,3 @@ class UserRepository(IUserRepository):
             image=model.image,
             created_at=model.created_at,
         )
-        dto.id = model.id
-        return dto

@@ -1,10 +1,10 @@
 import datetime
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True)
 class UserDTO:
-    id: int = field(init=False)
+    id: int
     username: str
     email: str
     password_hash: str
