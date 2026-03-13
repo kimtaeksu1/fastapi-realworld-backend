@@ -80,7 +80,6 @@ async def test_comment_create_validation_error(
     authorized_test_client: AsyncClient, test_article: ArticleDTO
 ) -> None:
     response = await authorized_test_client.post(
-        url=f"/articles/{test_article.slug}/comments",
-        json={"comment": {"body": ""}},
+        url=f"/articles/{test_article.slug}/comments", json={"comment": {"body": ""}}
     )
     assert response.status_code == 422

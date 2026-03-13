@@ -14,9 +14,7 @@ async def create_user(
     return await user_service.create_user(
         session=session,
         user_to_create=CreateUserDTO(
-            username=username,
-            email=f"{username}@example.com",
-            password="password",
+            username=username, email=f"{username}@example.com", password="password"
         ),
     )
 
@@ -32,10 +30,7 @@ async def create_article(
         session=session,
         author_id=author_id,
         article_to_create=CreateArticleDTO(
-            title=title,
-            description="description",
-            body="body",
-            tags=tags,
+            title=title, description="description", body="body", tags=tags
         ),
     )
 
@@ -157,11 +152,7 @@ async def test_user_feed_returns_followed_articles_only(
     followed_author = await create_user(session, user_service, "followed-author")
     unfollowed_author = await create_user(session, user_service, "unfollowed-author")
     await create_article(
-        session,
-        article_service,
-        followed_author.id,
-        "Followed Article",
-        ["tag-feed"],
+        session, article_service, followed_author.id, "Followed Article", ["tag-feed"]
     )
     await create_article(
         session,

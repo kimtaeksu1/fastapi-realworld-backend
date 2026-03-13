@@ -20,6 +20,10 @@ from conduit.dtos.domain.user import CreateUserDTO, UserDTO
 from conduit.infrastructure.models import Base
 from conduit.interfaces.repositories.article import IArticleRepository
 from conduit.interfaces.repositories.user import IUserRepository
+from conduit.interfaces.services.auth import IUserAuthService
+from conduit.interfaces.services.comment import ICommentService
+from conduit.interfaces.services.profile import IProfileService
+from conduit.interfaces.services.tag import ITagService
 from conduit.interfaces.services.user import IUserService
 
 SetupFixture: TypeAlias = None
@@ -104,6 +108,26 @@ def auth_token_service(di_container: Container) -> IAuthTokenService:
 @pytest.fixture
 def user_service(di_container: Container) -> IUserService:
     return di_container.user_service()
+
+
+@pytest.fixture
+def user_auth_service(di_container: Container) -> IUserAuthService:
+    return di_container.user_auth_service()
+
+
+@pytest.fixture
+def profile_service(di_container: Container) -> IProfileService:
+    return di_container.profile_service()
+
+
+@pytest.fixture
+def comment_service(di_container: Container) -> ICommentService:
+    return di_container.comment_service()
+
+
+@pytest.fixture
+def tag_service(di_container: Container) -> ITagService:
+    return di_container.tag_service()
 
 
 @pytest.fixture
